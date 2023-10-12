@@ -1,15 +1,7 @@
-# VORP Core
-
-## What is this?
-VORPCore  is the master tool for all your projects. All scripts in the VORPCore Framework rely on this.
-
-## API Docs
-
-
-### Initiate Core
+## VORP CORE
 
 ```lua
--- at the top of your file
+-- at the top of your server file or client 
 local VORPcore = {}
 
 TriggerEvent("getCore", function(core)
@@ -18,16 +10,10 @@ end)
 
 ```
 
-* The same Event above can be called from `client side` to be used for `the functions below`
-  *  `Notifications`
-  *  `CallBacks`
-  *  `webhooks`
-
 ### Hide or show CORE UI
 
 ```lua
     -- from server side
-    local _source = source
     TriggerClientEvent("vorp:showUi", _source, false) --hide
 
     -- from client side
@@ -35,19 +21,12 @@ end)
 
 ```
 
-### Notifications
+###  Notifications functions
 
-* API for notifications `client` side
+* CLIENT
 
 ```lua
----------------------------------
--- at the top of your client side file
-local VORPcore = {}
-
-TriggerEvent("getCore", function(core)
-    VORPcore = core 
-end)
-
+-- can also use exports or declare notification file name in fxmanifest
 VORPcore.NotifyTip("title",4000)
 VORPcore.NotifyLeft("title","subtitle","dict","icon",4000,"color")
 VORPcore.NotifyRightTip("title",4000)
@@ -61,23 +40,14 @@ VORPcore.NotifyFail("title","subtitle",4000)
 VORPcore.NotifyDead("title","audioref","audioname",4000)
 VORPcore.NotifyUpdate("title","subtitle",4000)
 VORPcore.NotifyWarning("title","subtitle","audioref","audioname",4000)
+VORPcore.NotifyLeftRank("title","subtitle","dict","icon",4000,"color")
 
 ```
 
-
-* API for notifications `server` side
+* SERVER
 
 ```lua
-    ---------------------------------
-    -- at the top of your client side
-    local VORPcore = {}
-
-    TriggerEvent("getCore", function(core)
-        VORPcore = core
-    end)
-
-    local _source = source -- player source
-
+   
     VORPcore.NotifyTip(_source,"title",4000)
     VORPcore.NotifyLeft(_source,"title","subtitle","dict","icon",4000,"color")
     VORPcore.NotifyRightTip(_source,"title",4000)
@@ -91,6 +61,7 @@ VORPcore.NotifyWarning("title","subtitle","audioref","audioname",4000)
     VORPcore.NotifyDead(_source,"title","audioref","audioname",4000)
     VORPcore.NotifyUpdate(_source,"title","subtitle",4000)
     VORPcore.NotifyWarning(_source,"title","subtitle","audioref","audioname",4000)
+    VORPcore.NotifyLeftRank(_source,"title","subtitle","dict","icon",4000,"color")
 
 ```
 
@@ -100,30 +71,16 @@ VORPcore.NotifyWarning("title","subtitle","audioref","audioname",4000)
 <Badge type="tip" text="Server Side Only" />
 
 ```lua
--- at the top of the server file
-local VORPcore = {}
-
-TriggerEvent("getCore", function(core)
-    VORPcore = core
-end)
-
 -- this returns a number
 local maxChars = VORPcore.maxCharacters 
 
 ```
 
-### Get Users Data 
+### Character Data 
 <Badge type="tip" text="Server Side Only" />
 
 ```lua
--- at the top of the server file
-local VORPcore = {}
 
-TriggerEvent("getCore", function(core)
-    VORPcore = core
-end)
-
-local _source = source
 -- contains functions and information from all characters
 local User = VORPcore.getUser(_source)
 
@@ -155,20 +112,12 @@ Character.comps
 
 ```
 
-### Update/Set Character Data
+### Character functions
 <Badge type="tip" text="Server Side Only" />
 
 * Set `functions`
 
 ```lua
--- at the top of the server file
-local VORPcore = {}
-
-TriggerEvent("getCore", function(core)
-    VORPcore = core
-end)
-
-local _source = source
 
 local Character = VORPcore.getUser(_source).getUsedCharacter
 
@@ -177,8 +126,6 @@ local Character = VORPcore.getUser(_source).getUsedCharacter
 Character.setJob("miner")
 Character.setJobGrade(1)
 Character.setGroup("admin")
-Character.setMoney(1000.50)
-Character.setGold(1000.20)
 Character.setRol(1000)
 Character.setXp(5000)
 Character.setFirstname("Sadie")
@@ -196,13 +143,6 @@ Character.removeXp(100)
 <Badge type="warning" text="Client Side Only" /> 
 
 ```lua
--- client side only
-local VORPcore = {}
-
-TriggerEvent("getCore", function(core)
-    VORPcore = core
-end)
-
 -- to add a players to different instances use his server id + instance number
 -- to add players to same instance use only the instanceNumber
 local instanceNumber = 54123 -- any number
@@ -237,7 +177,6 @@ local getstatus = VORPwl.getEntry(identifier).getStatus()
 
 --get players warnings
 -- use the API core to get source data
-local _source = source 
 local User = VorpCore.getUser(_source)
 local warnstatus = User.getPlayerwarnings() 
 
@@ -253,12 +192,6 @@ local warnstatus = User.getPlayerwarnings()
 
 ```lua
 
--- top at server side
-local VORPcore = {}
-
-TriggerEvent("getCore", function(core)
-    VORPcore = core
-end)
 -- example of how to create tables
 -- it only does this once
 local Tables = {
@@ -349,89 +282,145 @@ end)
 * Send a message from your `client` or `server` side  to a webhook to your discord
 
 ```lua
-
+---@param title string 
+---@param webhook string webhook link
+---@param description string
+---@param color? number embed color
+---@param name? string embed name
+---@param logo? string logo image link
+---@param footerlogo? string link image
+---@param avatar? string link  
 VorpCore.AddWebhook(title, webhook, description, color, name, logo, footerlogo, avatar)
 
 ```
 
-| Parameter | Type   | Description                                                  | Required ? |
-|-----------|--------|--------------------------------------------------------------|------------|
-| title     | String | title of webhhok                                             | True       |
-| webhhok   | String | link of the channel webhook                                  | True       |
-| description | String | description of the action logged                           | True       |
-| color     | number | color of the embed                                           | false       |
-| name      | string | name of the webhook                                          | false       |
-| logo      | string | link of the image                                            | false      |
-| footerlogo | string | link of the image                                           | false       |
-| avatar     | string | link of the image                                           | false      |
-
-### API character played hours
+                        
+### User Data
 <Badge type="tip" text="Server Side Only" />
 
-* this will return the character played hours that is saved in the database
 
 ```lua
 local User = VorpCore.getUser(_source)
    print(User.hours)
+   print(User.getGroup) -- group users table 
 ```
+## RPC Callbacks
 
+### Server
 
+---
+* ServerRpcCall Export
+  * TriggerAwait
+  * TriggerAsync
+  * Register
+---
+```lua
+-- top of your server file 
+ local ServerRPC = exports.vorp_core:ServerRpcCall() --[[@as ServerRPC]] -- for intellisense
+```
+* Trigger Await Callback
+```lua
+--- Trigger a server callback Synchronously
+---@param name string callback name
+---@param source number player source
+---@vararg ...? any parameters tables strings numbers etc
+local result =  ServerRP.Callback.TriggerAwait(name, source,...)
+print(result)
+```
+* Trigger Async Callback
+```lua
+--- trigger a server callback asynchronously
+---@param name string callback name
+---@param source number player source
+---@param callback fun(result:any) callback function
+---@vararg ...? any  parameters tables strings numbers etc
+ ServerRPC.Callback.TriggerAsync(name, source, function(result)
+  print(result)
+ end, ...) 
+```
+* Register Callback
+```lua
+--- Register a callback
+---@param name string callback name
+---@param callback fun(source:number,callback:fun(cb:any), ...?:any)
+ ServerRPC.Callback.Register(name, function(source,callback,...)
+   callback(...)
+ end) 
+```
+### Client
+---
+* ClientRpcCall Export
+  * TriggerAwait
+  * TriggerAsync
+  * Register
+--- 
 
-### Call Backs
-* you can call back from server to client using the API
 
 ```lua
+local ClientRPC = exports.vorp_core:ClientRpcCall() --[[@as ClientRPC]] -- for intellisense
+```
+* Trigger Await Callback
+```lua
 
--- top at client side
-local VORPcore = {}
-
-TriggerEvent("getCore", function(core)
-    VORPcore = core
+--- Trigger a client callback Asynchronously
+---@param name string callback name
+---@vararg ...? any can send as many parameters as you want 
+local result =  ClientRPC.Callback.TriggerAwait(name, ...) 
+```
+* Trigger Async Callback
+```lua
+--- Trigger a client callback Synchronously
+---@param name string callback name
+---@param callback fun(result:any) callback function
+---@vararg ...? any can send as many parameters as you want 
+ ClientRPC.Callback.TriggerASync(name, function(result)
+  print(result)
+ end, ...) 
+```
+* Register Callback
+```lua
+---*Register a callback
+---@param name string callback name
+---@param callback fun(callback:fun(result:any), ...?:any) callback function
+ClientRPC.Callback.Register(name, function(source,callback,...)
+ callback(...)
 end)
+```
 
- VORPcore.RpcCall("RPCcallbackname", function(result) -- asyncronouns 
+### Call Backs OLD
 
-   if result then
-     -- run code
-    else
-      -- run code
-   end
+:::warning
+this will be removed from the docs use the above from now onaas its the only one supported
+:::
 
-   local args = true  --can be a table string or number
+* CLIENT
+```lua
+ --- Trigger Rpc callback
+ ---@param name string callback name
+ ---@param callback fun(result:any) result 
+ ---@param args? any extra arguments
+ VORPcore.RpcCall(name,function(result) -- asynchronous 
+   print(result)
  end,args) -- you can send extra arguments 
-
-
-
+```
+* SERVER
+```lua
+---@param name string callback name
+---@param callback fun(source:number, cb: fun(any), args:any)
+VORPcore.addRpcCallback("RPCcallbackname", function(source, cb, args) 
+  return cb(any) 
+end)
 ```
 
-| Parameter | Type   | Description                                                  | Required ? |
-|-----------|--------|--------------------------------------------------------------|------------|
-| args      | Any    | send  paramenters                                            | false       |
+# EVENT LISTENERS
 
-
-
-
-* Server Side
-
+* SERVER
 ```lua
-
-local VORPcore = {}
-
-TriggerEvent("getCore", function(core)
-    VORPcore = core
-end)
-
-VORPcore.addRpcCallback("RPCcallbackname", function(source, cb, args)
-
-local _source = soure
-
-    if not args then 
-        cb(false)
-    end
-
-    cb(true)
-
-end)
-
+-- group change
+TriggerEvent("vorp:playerGroupChange", self.source, self.group) -- listener for group change
+-- job change
+TriggerEvent("vorp:playerJobChange", self.source, self.job) -- listener for job change
+-- job grade change
+TriggerEvent("vorp:playerJobGradeChange", self.source, self.jobgrade) -- listener for job grade change
 
 ```
